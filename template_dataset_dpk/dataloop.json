@@ -1,0 +1,60 @@
+{
+    "displayName": "$DPK_DISPLAY_NAME",
+    "name": "$DPK_NAME",
+    "description": "Public Dataset",
+    "scope": "public",
+    "version": "1.0.29",
+    "codebase": {
+        "type": "git",
+        "gitUrl": "https://github.com/dataloop-ai-apps/dataloop-datasets-exporter.git",
+        "gitTag": "1.0.29"
+    },
+    "attributes": {
+        "Provider": "Dataloop",
+        "Category": "Dataset",
+        "License": ""
+    },
+    "components": {
+        "modules": [
+            {
+                "name": "dataset-importer",
+                "entryPoint": "modules/import_dataset.py",
+                "className": "DatasetImporter",
+                "description": "Import a public dataset",
+                "initInputs": [],
+                "functions": [
+                    {
+                        "name": "import_dataset",
+                        "input": [
+                            {
+                                "type": "Dataset",
+                                "name": "dataset",
+                                "description": "Dataloop Dataset Entity"
+                            },
+                            {
+                                "type": "String",
+                                "name": "source",
+                                "description": "source of dataset"
+                            }
+                        ],
+                        "output": [
+                        ],
+                        "displayName": "import_dataset",
+                        "displayIcon": "",
+                        "description": ""
+                    }
+                ]
+            }
+        ],
+        "datasets": [
+            {
+                "name": "$DPK_DATASET_NAME",
+                "docs": "$DPK_DATASET_DOCS",
+                "source": "$DPK_DATASET_SOURCE",
+                "invoke": {
+                    "namespace": "dataset-importer.import_dataset"
+                }
+            }
+        ]
+    }
+}

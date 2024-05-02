@@ -1,0 +1,96 @@
+{
+    "name": "internal-dataloop-datasets",
+    "displayName": "Public Dataloop Dataset",
+    "description": "Export and import datasets",
+    "version": "1.0.29",
+    "scope": "public",
+    "attributes": {},
+    "codebase": {
+        "type": "git",
+        "gitUrl": "https://github.com/dataloop-ai-apps/dataloop-datasets-exporter.git",
+        "gitTag": "1.0.29"
+    },
+    "components": {
+        "toolbars": [
+            {
+                "displayName": "Export Dataset",
+                "invoke": {
+                    "type": "function",
+                    "namespace": "public-exp-imp-service.export-import.export_dataset"
+                },
+                "location": "datasetBrowserApps",
+                "icon": ""
+            }
+        ],
+        "modules": [
+            {
+                "name": "export-import",
+                "description": "Export and import public datasets",
+                "functions": [
+                    {
+                        "name": "export_dataset",
+                        "displayName": "Export",
+                        "input": [
+                            {
+                                "type": "Dataset",
+                                "name": "dataset"
+                            },
+                            {
+                                "type": "Json",
+                                "name": "query"
+                            }
+                        ],
+                        "output": [
+                            {
+                                "name": "dataset",
+                                "type": "Dataset"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "import_dataset",
+                        "displayName": "Import",
+                        "input": [
+                            {
+                                "name": "dst_dataset",
+                                "type": "Dataset"
+                            },
+                              {
+                                "name": "src_dataset_name",
+                                "type": "String"
+                            }
+                        ],
+                        "output": [
+                            {
+                                "name": "dataset",
+                                "type": "Dataset"
+                            }
+                        ]
+                    }
+                ],
+                "className": "PublicDatasets",
+                "initInputs": [],
+                "entryPoint": "modules/public_datasets.py"
+            }
+        ],
+        "services": [
+            {
+                "name": "public-exp-imp-service",
+                "moduleName": "export-import",
+                "botUserName": "pipelines@dataloop.ai",
+                "runtime": {
+                    "podType": "regular-s",
+                    "concurrency": 10,
+                    "autoscaler": {
+                        "type": "rabbitmq",
+                        "minReplicas": 0,
+                        "maxReplicas": 1,
+                        "queueLength": 1000
+                    },
+                    "preemptible": true
+                },
+                "global": true
+            }
+        ]
+    }
+}
