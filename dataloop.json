@@ -37,7 +37,7 @@
                             },
                             {
                                 "type": "String",
-                                "name_": "dataset_id"
+                                "name": "dataset_id"
                             },
                             {
                                 "type": "Json",
