@@ -6,14 +6,14 @@ import dtlpy as dl
 
 
 def clean():
-    dpk = dl.dpks.get(dpk_name='internal-dataloop-datasets')
+    dpk = dl.dpks.get(dpk_name='dataloop-datasets-exporter')
     filters = dl.Filters(field='dpkName', values=dpk.name, resource='apps')
     for app in dl.apps.list(filters=filters).all():
         print(app.name, app.project.name)
         app.uninstall()
     [i.delete() for i in list(dpk.revisions.all())]
 
-    filters = dl.Filters('name', 'internal-dataset-*', resource='dpks')
+    filters = dl.Filters('name', 'dataloop-datasets-*', resource='dpks')
     dpks = dl.dpks.list(filters=filters)
     print(dpks.items_count)
     for dpk in dpks.all():
@@ -59,7 +59,7 @@ def publish_and_install(project, manifest):
 
 if __name__ == "__main__":
     dl.setenv('rc')
-    project = dl.projects.get(project_name="DataloopTasks")
+    project = dl.projects.get(project_name="DataloopDatasets")
     # bump()
     with open('dataloop.json') as f:
         manifest = json.load(f)

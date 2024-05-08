@@ -12,7 +12,7 @@ PROD_P_ID = ""
 S_P_ID = ""
 
 
-class PublicDatasets(dl.BaseServiceRunner):
+class DataloopDatasets(dl.BaseServiceRunner):
     def __init__(self):
         self.datasets_project = dl.projects.get(project_id=RC_P_ID)
 
@@ -52,8 +52,8 @@ class PublicDatasets(dl.BaseServiceRunner):
         shutil.copytree(src_app_dir, dst_app_dir)
         with open(os.path.join(dst_app_dir, 'dataloop.json'), 'r+') as f:
             manifest = f.read()
-            manifest = manifest.replace("$DPK_DISPLAY_NAME", f"Internal Dataset {dataset_name}")
-            manifest = manifest.replace("$DPK_NAME", f"internal-dataset-{dataset_name.lower().replace(' ', '-')}")
+            manifest = manifest.replace("$DPK_DISPLAY_NAME", f"Dataloop Dataset {dataset_name}")
+            manifest = manifest.replace("$DPK_NAME", f"dataloop-datasets-{dataset_name.lower().replace(' ', '-')}")
             manifest = manifest.replace("$DPK_DATASET_NAME", dataset_name)
             manifest = manifest.replace("$DPK_DATASET_DOCS", dataset_name)
             manifest = manifest.replace("$DPK_DATASET_SOURCE", dataset_name)
@@ -63,7 +63,8 @@ class PublicDatasets(dl.BaseServiceRunner):
 
         return dst_app_dir
 
-    def export_dataset(self, dataset: dl.Dataset, query: dict = None) -> dl.Dataset:
+    def import_to_main_project(self, dataset_id: str, query: dict = None, app_name: str = None) -> dl.Dataset:
+        dataset = dl.datasets.get(dataset_id=dataset_id)
         logger.info(f'Starting export: source dataset: {dataset.name!r}, {dataset.id!r}')
         existing_datasets = [d.name for d in self.datasets_project.datasets.list()]
         if dataset.name in existing_datasets:
@@ -95,6 +96,5 @@ class PublicDatasets(dl.BaseServiceRunner):
 
 
 if __name__ == "__main__":
-    dataset = dl.datasets.get(None, '5f4d13ba4a958a49a7747cd9')
-    self = PublicDatasets()
-    self.export_dataset(dataset=dataset)
+    self = DataloopDatasets()
+    self.import_to_main_project(dataset_id='5f4d13ba4a958a49a7747cd9')

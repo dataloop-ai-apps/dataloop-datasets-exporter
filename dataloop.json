@@ -1,9 +1,9 @@
 {
-    "name": "internal-dataloop-datasets",
+    "name": "dataloop-datasets-exporter",
     "displayName": "Public Dataloop Dataset",
     "description": "Export and import datasets",
     "version": "1.0.30",
-    "scope": "public",
+    "scope": "project",
     "attributes": {},
     "codebase": {
         "type": "git",
@@ -13,12 +13,12 @@
     "components": {
         "toolbars": [
             {
-                "displayName": "Export Dataset",
+                "displayName": "Import Dataset",
                 "invoke": {
                     "type": "function",
-                    "namespace": "public-exp-imp-service.export-import.export_dataset"
+                    "namespace": "public-exp-imp-service.export-import.import_to_main_project"
                 },
-                "location": "datasetBrowserApps",
+                "location": "projectActions",
                 "icon": ""
             }
         ],
@@ -28,12 +28,12 @@
                 "description": "Export and import public datasets",
                 "functions": [
                     {
-                        "name": "export_dataset",
+                        "name": "import_to_main_project",
                         "displayName": "Export",
                         "input": [
                             {
-                                "type": "Dataset",
-                                "name": "dataset"
+                                "type": "String",
+                                "name_": "dataset_id"
                             },
                             {
                                 "type": "Json",
@@ -68,9 +68,9 @@
                         ]
                     }
                 ],
-                "className": "PublicDatasets",
+                "className": "DataloopDatasets",
                 "initInputs": [],
-                "entryPoint": "modules/public_datasets.py"
+                "entryPoint": "modules/dataloop_datasets.py"
             }
         ],
         "services": [

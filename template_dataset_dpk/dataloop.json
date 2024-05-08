@@ -1,7 +1,7 @@
 {
     "displayName": "$DPK_DISPLAY_NAME",
     "name": "$DPK_NAME",
-    "description": "Public Dataset",
+    "description": "Dataloop Dataset App",
     "scope": "public",
     "version": "1.0.30",
     "codebase": {
