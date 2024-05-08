@@ -32,10 +32,6 @@
                         "displayName": "Import Dataset",
                         "input": [
                             {
-                                "type": "Project",
-                                "name": "project"
-                            },
-                            {
                                 "type": "String",
                                 "name": "dataset_id"
                             },

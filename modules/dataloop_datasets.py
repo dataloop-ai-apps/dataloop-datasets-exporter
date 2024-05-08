@@ -64,8 +64,6 @@ class DataloopDatasets(dl.BaseServiceRunner):
         return dst_app_dir
 
     def import_to_main_project(self,
-                               project: str,
-                               config,
                                dataset_id: str,
                                query: dict = None,
                                app_name: str = None) -> dl.Dataset:
