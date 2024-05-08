@@ -29,8 +29,12 @@
                 "functions": [
                     {
                         "name": "import_to_main_project",
-                        "displayName": "Export",
+                        "displayName": "Import Dataset",
                         "input": [
+                            {
+                                "type": "Project",
+                                "name": "project"
+                            },
                             {
                                 "type": "String",
                                 "name_": "dataset_id"
@@ -55,7 +59,7 @@
                                 "name": "dst_dataset",
                                 "type": "Dataset"
                             },
-                              {
+                            {
                                 "name": "src_dataset_name",
                                 "type": "String"
                             }

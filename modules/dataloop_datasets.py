@@ -63,7 +63,12 @@ class DataloopDatasets(dl.BaseServiceRunner):
 
         return dst_app_dir
 
-    def import_to_main_project(self, dataset_id: str, query: dict = None, app_name: str = None) -> dl.Dataset:
+    def import_to_main_project(self,
+                               project: str,
+                               config,
+                               dataset_id: str,
+                               query: dict = None,
+                               app_name: str = None) -> dl.Dataset:
         dataset = dl.datasets.get(dataset_id=dataset_id)
         logger.info(f'Starting export: source dataset: {dataset.name!r}, {dataset.id!r}')
         existing_datasets = [d.name for d in self.datasets_project.datasets.list()]
