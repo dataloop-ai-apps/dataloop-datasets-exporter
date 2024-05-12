@@ -17,9 +17,17 @@ class DataloopDatasets(dl.BaseServiceRunner):
         self.datasets_project = dl.projects.get(project_id=RC_P_ID)
 
     @staticmethod
-    def deep_copy_dataset(src_dataset: dl.Dataset, dst_project: dl.Project, dst_dataset: dl.Dataset = None):
+    def deep_copy_dataset(src_dataset: dl.Dataset,
+                          src_query: dict,
+                          dst_project: dl.Project,
+                          dst_dataset: dl.Dataset = None):
         """
 
+        :param src_dataset:
+        :param src_query:
+        :param dst_project:
+        :param dst_dataset:
+        :return:
         """
 
         if dst_dataset is None:
@@ -38,7 +46,11 @@ class DataloopDatasets(dl.BaseServiceRunner):
 
         tmp_dir = os.path.join('tmp', src_dataset.id)
         # download everything
+        filters = None
+        if src_query is not None:
+            filters = dl.Filters(custom_filter=src_query)
         src_dataset.download(local_path=tmp_dir,
+                             filters=filters,
                              annotation_options=['json'])
         # upload everything
         dst_dataset.items.upload(local_path=os.path.join(tmp_dir, 'items/*'),
@@ -73,6 +85,7 @@ class DataloopDatasets(dl.BaseServiceRunner):
         if dataset.name in existing_datasets:
             raise ValueError(f'Dataset with same name already exists: {dataset.name}')
         dst_dataset = self.deep_copy_dataset(src_dataset=dataset,
+                                             src_query=query,
                                              dst_project=self.datasets_project)
         logger.info(f'dataset import finished. dst dataset: {dst_dataset.name!r}, {dst_dataset.id!r}')
 
