@@ -2,13 +2,13 @@
     "name": "dataloop-datasets-exporter",
     "displayName": "Public Dataloop Dataset",
     "description": "Export and import datasets",
-    "version": "1.0.34",
+    "version": "1.0.35",
     "scope": "project",
     "attributes": {},
     "codebase": {
         "type": "git",
         "gitUrl": "https://github.com/dataloop-ai-apps/dataloop-datasets-exporter.git",
-        "gitTag": "1.0.34"
+        "gitTag": "1.0.35"
     },
     "components": {
         "toolbars": [
