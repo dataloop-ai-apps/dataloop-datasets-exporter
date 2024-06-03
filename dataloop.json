@@ -2,7 +2,7 @@
     "name": "dataloop-datasets-exporter",
     "displayName": "Public Dataloop Dataset",
     "description": "Export and import datasets",
-    "version": "1.0.35",
+    "version": "1.0.36",
     "scope": "project",
     "attributes": {},
     "codebase": {
