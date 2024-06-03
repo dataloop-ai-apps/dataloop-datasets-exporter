@@ -19,12 +19,14 @@ class DataloopDatasets(dl.BaseServiceRunner):
     @staticmethod
     def deep_copy_dataset(src_dataset: dl.Dataset,
                           src_query: dict,
+                          src_recipe: dl.Recipe,
                           dst_project: dl.Project,
                           dst_dataset: dl.Dataset = None):
         """
 
         :param src_dataset:
         :param src_query:
+        :param src_recipe:
         :param dst_project:
         :param dst_dataset:
         :return:
@@ -33,7 +35,6 @@ class DataloopDatasets(dl.BaseServiceRunner):
         if dst_dataset is None:
             dst_dataset = dst_project.datasets.create(dataset_name=src_dataset.name)
 
-        src_recipe: dl.Recipe = src_dataset.recipes.list()[0]
         dst_recipe: dl.Recipe = dst_dataset.recipes.list()[0]
         src_ont: dl.Ontology = src_recipe.ontologies.list()[0]
         dst_ont: dl.Ontology = dst_recipe.ontologies.list()[0]
@@ -47,7 +48,7 @@ class DataloopDatasets(dl.BaseServiceRunner):
         tmp_dir = os.path.join('tmp', src_dataset.id)
         # download everything
         filters = None
-        if src_query is not None:
+        if src_query != {}:
             filters = dl.Filters(custom_filter=src_query)
         src_dataset.download(local_path=tmp_dir,
                              filters=filters,
@@ -78,14 +79,37 @@ class DataloopDatasets(dl.BaseServiceRunner):
     def import_to_main_project(self,
                                dataset_id: str,
                                query: dict = None,
-                               app_name: str = None) -> dl.Dataset:
+                               dataset_name: str = None,
+                               recipe_id: str = None,
+                               overwrite: str = "false") -> dl.Dataset:
         dataset = dl.datasets.get(dataset_id=dataset_id)
         logger.info(f'Starting export: source dataset: {dataset.name!r}, {dataset.id!r}')
-        existing_datasets = [d.name for d in self.datasets_project.datasets.list()]
-        if dataset.name in existing_datasets:
-            raise ValueError(f'Dataset with same name already exists: {dataset.name}')
+        if dataset_name is None:
+            dataset_name = dataset.name
+        overwrite = overwrite == "true"
+
+        # check if dataset exists
+        try:
+            existing_dataset = self.datasets_project.datasets.get(dataset_name=dataset_name)
+            if overwrite is False:
+                raise ValueError(f'Dataset with same name already exists: {dataset.name}')
+            else:
+                # delete existing dataset for overwrite
+                logger.warning(
+                    f'Dataset exists and overwrite is {overwrite}. Deleting: {existing_dataset.name!r}, {existing_dataset.id!r}')
+                existing_dataset.delete(True, True)
+        except dl.exceptions.NotFound:
+            pass
+
+        if recipe_id is not None:
+            src_recipe = dl.recipes.get(recipe_id=recipe_id)
+        else:
+            src_recipe: dl.Recipe = dataset.recipes.list()[0]
+        if query is None:
+            query = {}
         dst_dataset = self.deep_copy_dataset(src_dataset=dataset,
                                              src_query=query,
+                                             src_recipe=src_recipe,
                                              dst_project=self.datasets_project)
         logger.info(f'dataset import finished. dst dataset: {dst_dataset.name!r}, {dst_dataset.id!r}')
 
@@ -105,7 +129,10 @@ class DataloopDatasets(dl.BaseServiceRunner):
             src_dataset = self.datasets_project.datasets.get(dataset_name=src_dataset_name)
         except dl.exceptions.NotFound:
             raise ValueError(f'Dataset with name {src_dataset_name!r} wasnt found in the public datasets project')
+        src_recipe: dl.Recipe = src_dataset.recipes.list()[0]
         dst_dataset = self.deep_copy_dataset(src_dataset=src_dataset,
+                                             src_recipe=src_recipe,
+                                             src_query=dict(),
                                              dst_project=dst_dataset.project,
                                              dst_dataset=dst_dataset)
         return dst_dataset

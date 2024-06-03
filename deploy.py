@@ -9,7 +9,7 @@ def clean():
     dpk = dl.dpks.get(dpk_name='dataloop-datasets-exporter')
     filters = dl.Filters(field='dpkName', values=dpk.name, resource='apps')
     for app in dl.apps.list(filters=filters).all():
-        print(app.name, app.project.name)
+        print(app.id, app.name, app.project.name)
         app.uninstall()
     [i.delete() for i in list(dpk.revisions.all())]
 
@@ -52,7 +52,7 @@ def publish_and_install(project, manifest):
 
         app = project.apps.install(dpk=dpk,
                                    app_name=dpk.display_name,
-                                   scope='system')
+                                   scope='project')
         print(f'installed! app id: {app.id}')
     print(f'Done!')
 

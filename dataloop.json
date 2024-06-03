@@ -8,7 +8,7 @@
     "codebase": {
         "type": "git",
         "gitUrl": "https://github.com/dataloop-ai-apps/dataloop-datasets-exporter.git",
-        "gitTag": "1.0.35"
+        "gitTag": "1.0.36"
     },
     "components": {
         "toolbars": [
@@ -38,6 +38,18 @@
                             {
                                 "type": "Json",
                                 "name": "query"
+                            },
+                            {
+                                "type": "String",
+                                "name": "dataset_name"
+                            },
+                            {
+                                "type": "String",
+                                "name": "recipe_id"
+                            },
+                            {
+                                "type": "String",
+                                "name": "overwrite"
                             }
                         ],
                         "output": [
