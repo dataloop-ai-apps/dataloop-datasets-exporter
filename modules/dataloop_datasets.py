@@ -20,21 +20,15 @@ class DataloopDatasets(dl.BaseServiceRunner):
     def deep_copy_dataset(src_dataset: dl.Dataset,
                           src_query: dict,
                           src_recipe: dl.Recipe,
-                          dst_project: dl.Project,
-                          dst_dataset: dl.Dataset = None):
+                          dst_dataset: dl.Dataset):
         """
 
         :param src_dataset:
         :param src_query:
         :param src_recipe:
-        :param dst_project:
         :param dst_dataset:
         :return:
         """
-
-        if dst_dataset is None:
-            dst_dataset = dst_project.datasets.create(dataset_name=src_dataset.name)
-
         dst_recipe: dl.Recipe = dst_dataset.recipes.list()[0]
         src_ont: dl.Ontology = src_recipe.ontologies.list()[0]
         dst_ont: dl.Ontology = dst_recipe.ontologies.list()[0]
@@ -83,7 +77,7 @@ class DataloopDatasets(dl.BaseServiceRunner):
                                recipe_id: str = None,
                                overwrite: str = "false") -> dl.Dataset:
         dataset = dl.datasets.get(dataset_id=dataset_id)
-        logger.info(f'Starting export: source dataset: {dataset.name!r}, {dataset.id!r}')
+        logger.info(f'Starting export: source dataset: {dataset.name!r}, {dataset.id!r}. overwrite: {overwrite}')
         if dataset_name is None:
             dataset_name = dataset.name
         overwrite = overwrite == "true"
@@ -92,7 +86,7 @@ class DataloopDatasets(dl.BaseServiceRunner):
         try:
             existing_dataset = self.datasets_project.datasets.get(dataset_name=dataset_name)
             if overwrite is False:
-                raise ValueError(f'Dataset with same name already exists: {dataset.name}')
+                raise ValueError(f'Dataset with same name already exists: {dataset_name}')
             else:
                 # delete existing dataset for overwrite
                 logger.warning(
@@ -107,14 +101,15 @@ class DataloopDatasets(dl.BaseServiceRunner):
             src_recipe: dl.Recipe = dataset.recipes.list()[0]
         if query is None:
             query = {}
+        dst_dataset = self.datasets_project.datasets.create(dataset_name=dataset_name)
         dst_dataset = self.deep_copy_dataset(src_dataset=dataset,
                                              src_query=query,
                                              src_recipe=src_recipe,
-                                             dst_project=self.datasets_project)
+                                             dst_dataset=dst_dataset)
         logger.info(f'dataset import finished. dst dataset: {dst_dataset.name!r}, {dst_dataset.id!r}')
 
         # create the DPK
-        dpk_directory = self.create_dpk_directory(dataset_name=dataset.name)
+        dpk_directory = self.create_dpk_directory(dataset_name=dataset_name)
         logger.info(f'DPK files created')
 
         # publish
@@ -133,7 +128,6 @@ class DataloopDatasets(dl.BaseServiceRunner):
         dst_dataset = self.deep_copy_dataset(src_dataset=src_dataset,
                                              src_recipe=src_recipe,
                                              src_query=dict(),
-                                             dst_project=dst_dataset.project,
                                              dst_dataset=dst_dataset)
         return dst_dataset
 
