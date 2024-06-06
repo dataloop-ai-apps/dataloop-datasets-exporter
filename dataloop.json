@@ -8,7 +8,7 @@
     "codebase": {
         "type": "git",
         "gitUrl": "https://github.com/dataloop-ai-apps/dataloop-datasets-exporter.git",
-        "gitTag": "1.0.38"
+        "gitTag": "1.0.39"
     },
     "components": {
         "toolbars": [
