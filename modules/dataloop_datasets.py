@@ -1,5 +1,6 @@
 import logging
 import shutil
+import uuid
 import os
 
 import dtlpy as dl
@@ -38,17 +39,21 @@ class DataloopDatasets(dl.BaseServiceRunner):
         src_ont.id = dst_ont.id
         src_ont.update(True)
 
-        tmp_dir = os.path.join('tmp', src_dataset.id)
+        tmp_dir = os.path.join('tmp', str(uuid.uuid4()))
         # download everything
-        filters = None
-        if src_query != {}:
-            filters = dl.Filters(custom_filter=src_query)
-        src_dataset.download(local_path=tmp_dir,
-                             filters=filters,
-                             annotation_options=['json'])
-        # upload everything
-        dst_dataset.items.upload(local_path=os.path.join(tmp_dir, 'items/*'),
-                                 local_annotations_path=os.path.join(tmp_dir, 'json'))
+        try:
+            filters = None
+            if src_query != {}:
+                filters = dl.Filters(custom_filter=src_query)
+            src_dataset.download(local_path=tmp_dir,
+                                 filters=filters,
+                                 annotation_options=['json'])
+            # upload everything
+            dst_dataset.items.upload(local_path=os.path.join(tmp_dir, 'items/*'),
+                                     local_annotations_path=os.path.join(tmp_dir, 'json'))
+        finally:
+            if os.path.isdir(tmp_dir):
+                shutil.rmtree(tmp_dir)
         return dst_dataset
 
     def create_dpk_directory(self, dataset_name: str) -> str:
@@ -148,4 +153,4 @@ class DataloopDatasets(dl.BaseServiceRunner):
 
 if __name__ == "__main__":
     self = DataloopDatasets()
-    self.import_to_main_project(dataset_id='5f4d13ba4a958a49a7747cd9')
+    # self.import_to_main_project(dataset_id='5f4d13ba4a958a49a7747cd9')
