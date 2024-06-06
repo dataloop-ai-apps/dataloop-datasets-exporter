@@ -2,7 +2,7 @@
     "name": "dataloop-datasets-exporter",
     "displayName": "Public Dataloop Dataset",
     "description": "Export and import datasets",
-    "version": "1.0.1",
+    "version": "1.0.39",
     "scope": "project",
     "attributes": {},
     "codebase": {
@@ -17,6 +17,15 @@
                 "invoke": {
                     "type": "function",
                     "namespace": "public-exp-imp-service.export-import.import_to_main_project"
+                },
+                "location": "projectActions",
+                "icon": ""
+            },
+                {
+                "displayName": "Remove Dataset and App",
+                "invoke": {
+                    "type": "function",
+                    "namespace": "public-exp-imp-service.export-import.remove_dataset_and_app"
                 },
                 "location": "projectActions",
                 "icon": ""
