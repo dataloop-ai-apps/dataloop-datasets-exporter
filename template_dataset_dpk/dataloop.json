@@ -3,11 +3,11 @@
     "name": "$DPK_NAME",
     "description": "Dataloop Dataset App",
     "scope": "public",
-    "version": "1.0.37",
+    "version": "1.0.38",
     "codebase": {
         "type": "git",
         "gitUrl": "https://github.com/dataloop-ai-apps/dataloop-datasets-exporter.git",
-        "gitTag": "1.0.37"
+        "gitTag": "1.0.38"
     },
     "attributes": {
         "Provider": "Dataloop",
