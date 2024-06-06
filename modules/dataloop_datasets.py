@@ -1,6 +1,5 @@
 import logging
 import shutil
-import json
 import os
 
 import dtlpy as dl
@@ -59,8 +58,8 @@ class DataloopDatasets(dl.BaseServiceRunner):
         shutil.copytree(src_app_dir, dst_app_dir)
         with open(os.path.join(dst_app_dir, 'dataloop.json'), 'r+') as f:
             manifest = f.read()
-            manifest = manifest.replace("$DPK_DISPLAY_NAME", f"Dataloop Dataset {dataset_name}")
-            manifest = manifest.replace("$DPK_NAME", f"dataloop-datasets-{dataset_name.lower().replace(' ', '-')}")
+            manifest = manifest.replace("$DPK_DISPLAY_NAME", dataset_name)
+            manifest = manifest.replace("$DPK_NAME", dataset_name.lower().replace(' ', '-'))
             manifest = manifest.replace("$DPK_DATASET_NAME", dataset_name)
             manifest = manifest.replace("$DPK_DATASET_DOCS", dataset_name)
             manifest = manifest.replace("$DPK_DATASET_SOURCE", dataset_name)
@@ -77,7 +76,8 @@ class DataloopDatasets(dl.BaseServiceRunner):
                                recipe_id: str = None,
                                overwrite: str = "false") -> dl.Dataset:
         dataset = dl.datasets.get(dataset_id=dataset_id)
-        logger.info(f'Starting export: source dataset: {dataset.name!r}, {dataset.id!r}. overwrite: {overwrite}')
+        logger.info(
+            f'Starting export: source dataset: {dataset.name!r}, {dataset.id!r}. overwrite: {overwrite}, input query: {query}')
         if dataset_name is None:
             dataset_name = dataset.name
         overwrite = overwrite == "true"
@@ -91,7 +91,7 @@ class DataloopDatasets(dl.BaseServiceRunner):
                 # delete existing dataset for overwrite
                 logger.warning(
                     f'Dataset exists and overwrite is {overwrite}. Deleting: {existing_dataset.name!r}, {existing_dataset.id!r}')
-                existing_dataset.delete(True, True)
+            self.remove_dataset_and_app(dataset_name=existing_dataset.name)
         except dl.exceptions.NotFound:
             pass
 
@@ -118,6 +118,20 @@ class DataloopDatasets(dl.BaseServiceRunner):
         logger.info(f'DPK published. dpk: {dpk.name!r}, {dpk.id!r}')
 
         return dst_dataset
+
+    def remove_dataset_and_app(self, dataset_name: str):
+        dataset_to_delete: dl.Dataset = self.datasets_project.get(dataset_name=dataset_name)
+        dpk_name = dataset_name.lower().replace(' ', '-')
+        try:
+            dpk = self.datasets_project.dpks.get(dpk_name=dpk_name)
+            logger.info(f'Trying to delete dpk: {dpk.name}, {dpk.id}')
+            dpk.delete()
+            logger.info(f'DPK delete successfully')
+        except dl.exceptions.NotFound:
+            logger.info(f'DPK not found: {dpk_name}')
+        logger.info(f'deleting dataset: {dataset_to_delete.name}, {dataset_to_delete.id}')
+        dataset_to_delete.delete(sure=True, really=True)
+        logger.info(f'Dataset delete successfully')
 
     def import_dataset(self, dst_dataset: dl.Dataset, src_dataset_name: str) -> dl.Dataset:
         try:
