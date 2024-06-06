@@ -129,6 +129,13 @@ class DataloopDatasets(dl.BaseServiceRunner):
         dpk_name = dataset_name.lower().replace(' ', '-')
         try:
             dpk = self.datasets_project.dpks.get(dpk_name=dpk_name)
+            if dpk.attributes.get('Category', '') != 'Dataset':
+                raise ValueError('DPk is not Dataset category. cant delete')
+            dataset_components= dpk.components.to_json().get('datasets', list())
+            if len(dataset_components) == 0:
+                raise ValueError('DPk doesnt have dataset component. cant delete')
+            if dataset_components[0].get('source', '') != dataset_to_delete.name:
+                raise ValueError('source dataset is not the same as dataset. cant delete')
             logger.info(f'Trying to delete dpk: {dpk.name}, {dpk.id}')
             dpk.delete()
             logger.info(f'DPK delete successfully')
